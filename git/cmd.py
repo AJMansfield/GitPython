@@ -592,19 +592,36 @@ class Git(LazyMixin):
         log.debug("Popen(%s, cwd=%s, universal_newlines=%s, shell=%s)",
                   command, cwd, universal_newlines, shell)
         try:
-            proc = Popen(command,
-                         env=env,
-                         cwd=cwd,
-                         bufsize=-1,
-                         stdin=istream,
-                         stderr=PIPE,
-                         stdout=stdout_sink,
-                         shell=shell is not None and shell or self.USE_SHELL,
-                         close_fds=is_posix,  # unsupported on windows
-                         universal_newlines=universal_newlines,
-                         creationflags=PROC_CREATIONFLAGS,
-                         **subprocess_kwargs
-                         )
+            if type(isteam) in {str, bytes}:
+                proc = Popen(command,
+                             env=env,
+                             cwd=cwd,
+                             bufsize=-1,
+                             stdin=PIPE,
+                             stderr=PIPE,
+                             stdout=stdout_sink,
+                             shell=shell is not None and shell or self.USE_SHELL,
+                             close_fds=is_posix,  # unsupported on windows
+                             universal_newlines=universal_newlines,
+                             creationflags=PROC_CREATIONFLAGS,
+                             **subprocess_kwargs
+                             )
+                proc.stdin.write(istream)
+
+            else:
+                proc = Popen(command,
+                             env=env,
+                             cwd=cwd,
+                             bufsize=-1,
+                             stdin=istream,
+                             stderr=PIPE,
+                             stdout=stdout_sink,
+                             shell=shell is not None and shell or self.USE_SHELL,
+                             close_fds=is_posix,  # unsupported on windows
+                             universal_newlines=universal_newlines,
+                             creationflags=PROC_CREATIONFLAGS,
+                             **subprocess_kwargs
+                             )
         except cmd_not_found_exception as err:
             raise GitCommandNotFound(command, err)
 
