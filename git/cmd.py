@@ -592,7 +592,7 @@ class Git(LazyMixin):
         log.debug("Popen(%s, cwd=%s, universal_newlines=%s, shell=%s)",
                   command, cwd, universal_newlines, shell)
         try:
-            if type(isteam) in {str, bytes}:
+            if type(istream) in {str, bytes}:
                 proc = Popen(command,
                              env=env,
                              cwd=cwd,
