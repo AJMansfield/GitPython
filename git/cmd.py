@@ -593,6 +593,7 @@ class Git(LazyMixin):
                   command, cwd, universal_newlines, shell)
         try:
             if type(istream) in {str, bytes}:
+                if type(istream) is str: istream = istream.encode('utf-8')
                 proc = Popen(command,
                              env=env,
                              cwd=cwd,
